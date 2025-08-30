@@ -1017,4 +1017,4 @@ const SupplyChainDashboard = () => {
   ];
 
 // Expose the component for index.html to mount
-;(window as any).App = SupplyChainDashboard;
+(window as any).App = SupplyChainDashboard;
