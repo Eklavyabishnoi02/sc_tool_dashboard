@@ -1,28 +1,14 @@
-// ===== Hosting shim: remove imports and expose React hooks & icon stubs =====
-const { useState, useEffect, useMemo } = React;
+// ===== Hosting shim: use global React/ReactDOM and expose App =====
+const { useState, useMemo } = React;
 
-// Simple icon component that accepts className/style
+// Tiny emoji icon so JSX compiles without external icon libs
 const IconStub = ({ label = '', children, className = '', style = {} }: any) =>
   React.createElement('span', { className, style: { marginRight: 6, ...style }, role: 'img', 'aria-label': label }, children);
-
 const Search = (p:any) => React.createElement(IconStub, {label:'search', ...p}, '🔎');
-const Filter = (p:any) => React.createElement(IconStub, {label:'filter', ...p}, '🧰');
-const Download = (p:any) => React.createElement(IconStub, {label:'download', ...p}, '⬇️');
-const ArrowRight = (p:any) => React.createElement(IconStub, {label:'arrow-right', ...p}, '➡️');
-const Star = (p:any) => React.createElement(IconStub, {label:'star', ...p}, '⭐');
-const AlertTriangle = (p:any) => React.createElement(IconStub, {label:'alert', ...p}, '⚠️');
-const CheckCircle = (p:any) => React.createElement(IconStub, {label:'check', ...p}, '✅');
-const Users = (p:any) => React.createElement(IconStub, {label:'users', ...p}, '👥');
-const Zap = (p:any) => React.createElement(IconStub, {label:'zap', ...p}, '⚡');
-const Target = (p:any) => React.createElement(IconStub, {label:'target', ...p}, '🎯');
-const Building = (p:any) => React.createElement(IconStub, {label:'building', ...p}, '🏢');
-const Smartphone = (p:any) => React.createElement(IconStub, {label:'smartphone', ...p}, '📱');
-const Monitor = (p:any) => React.createElement(IconStub, {label:'monitor', ...p}, '🖥️');
-const FileText = (p:any) => React.createElement(IconStub, {label:'file', ...p}, '📄');
-// ===========================================================================
 
+// ---- Types (ok with Babel’s typescript preset) ----
 type Vendor = {
-  domain: string;
+  domain: 'Plan' | 'Source' | 'Make' | 'Deliver' | 'Return' | 'Enable';
   vendor: string;
   product: string;
   valueProp: string;
@@ -40,14 +26,12 @@ type Vendor = {
   website: string;
 };
 
+// ===== Component =====
 const SupplyChainDashboard = () => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedDomain, setSelectedDomain] = useState<'All' | 'Plan' | 'Source' | 'Make' | 'Deliver' | 'Return' | 'Enable'>('All');
-  const [selectedIndustry, setSelectedIndustry] = useState('All');
-  const [selectedSize, setSelectedSize] = useState('All');
-  const [selectedVendors, setSelectedVendors] = useState<string[]>([]);
+  const [selectedDomain, setSelectedDomain] = useState<'All' | Vendor['domain']>('All');
 
-  // ===== DATA (fixed odd characters like "item‚ -location" → "item-location") =====
+  // ===== DATA (your full list; odd characters fixed like “item‚ -location” → “item-location”) =====
   const vendorData: Vendor[] = [
     // PLAN DOMAIN (17 vendors)
     {
@@ -104,8 +88,916 @@ const SupplyChainDashboard = () => {
       category: 'Process Leader',
       website: 'https://www.celonis.com'
     },
-    // ... (keeping your remaining entries exactly as you shared, but without any weird characters)
-    // MAKE / DELIVER / RETURN / ENABLE entries...
+    {
+      domain: 'Plan',
+      vendor: 'Blue Yonder',
+      product: 'Luminate Planning',
+      valueProp: 'AI-driven demand/supply planning and inventory optimization on Luminate platform.',
+      capabilities: 'ML forecasting; inventory optimization; scenario planning; GenAI summaries',
+      useCases: 'Demand & supply planning, MEIO, S&OP',
+      strengths: 'Strong AI/ML; proven scale; end-to-end platform',
+      redFlags: 'JDA legacy complexity; implementation challenges',
+      successFactors: 'Data quality; organizational change management',
+      references: 'Walmart, Coca-Cola',
+      bestFor: ['Retail', 'CPG', 'Manufacturing'],
+      companySize: ['Enterprise', 'Large Enterprise'],
+      rating: 4.3,
+      implementationTime: '8-15 months',
+      category: 'Market Leader',
+      website: 'https://blueyonder.com'
+    },
+    {
+      domain: 'Plan',
+      vendor: 'o9 Solutions',
+      product: 'Digital Brain (Planning Suite)',
+      valueProp: 'Enterprise planning platform across demand, supply, IBP with graph data model and ML.',
+      capabilities: 'Demand sensing; ML forecasting; knowledge graph; what-if optimization',
+      useCases: 'Demand planning, supply planning, IBP, NPI planning',
+      strengths: 'Modern architecture, AI-native, rapid deployment',
+      redFlags: 'Newer platform; smaller ecosystem',
+      successFactors: 'Digital-first mindset, quality data architecture',
+      references: 'Lenovo, Caterpillar',
+      bestFor: ['Technology', 'Manufacturing', 'Pharma'],
+      companySize: ['Enterprise', 'Large Enterprise'],
+      rating: 4.5,
+      implementationTime: '4-8 months',
+      category: 'Rising Star',
+      website: 'https://www.o9solutions.com'
+    },
+    {
+      domain: 'Plan',
+      vendor: 'SAP',
+      product: 'IBP (Integrated Business Planning)',
+      valueProp: 'Enterprise planning suite integrated with SAP ERP ecosystem.',
+      capabilities: 'Demand planning; supply planning; IBP; S&OP; advanced analytics',
+      useCases: 'S&OP/IBP, demand planning, supply planning',
+      strengths: 'SAP integration; comprehensive suite; strong roadmap',
+      redFlags: 'Complex implementation; high TCO',
+      successFactors: 'SAP ecosystem; dedicated Center of Excellence',
+      references: 'Unilever, Nestlé',
+      bestFor: ['Manufacturing', 'CPG', 'Chemicals'],
+      companySize: ['Enterprise', 'Large Enterprise'],
+      rating: 4.1,
+      implementationTime: '12-18 months',
+      category: 'Platform Leader',
+      website: 'https://www.sap.com/products/supply-chain-management/integrated-business-planning.html'
+    },
+    {
+      domain: 'Plan',
+      vendor: 'Coupa (LLamasoft)',
+      product: 'Supply Chain Guru',
+      valueProp: 'Network design and optimization platform with digital twin capabilities.',
+      capabilities: 'Network optimization; scenario modeling; digital twin; carbon footprint',
+      useCases: 'Network design, facility location, sustainability planning',
+      strengths: 'Advanced optimization; strong analytics; sustainability focus',
+      redFlags: 'Complex modeling; requires OR expertise',
+      successFactors: 'Operations research skills; quality data',
+      references: 'P&G, Johnson & Johnson',
+      bestFor: ['Manufacturing', 'CPG', 'Industrial'],
+      companySize: ['Enterprise', 'Large Enterprise'],
+      rating: 4.4,
+      implementationTime: '6-12 months',
+      category: 'Specialist',
+      website: 'https://www.coupa.com/products/supply-chain-design-and-planning'
+    },
+    {
+      domain: 'Plan',
+      vendor: 'ToolsGroup',
+      product: 'SO99+ & DemandCaster',
+      valueProp: 'Service optimization and probabilistic forecasting for complex supply chains.',
+      capabilities: 'Probabilistic forecasting; service-driven planning; multi-echelon inventory',
+      useCases: 'Service level optimization, spare parts planning, MRO',
+      strengths: 'Advanced algorithms; service optimization focus',
+      redFlags: 'Niche player; limited ecosystem',
+      successFactors: 'Statistical modeling expertise; service-focused KPIs',
+      references: 'Michelin, Komatsu',
+      bestFor: ['Industrial', 'Aerospace', 'Automotive'],
+      companySize: ['Mid-Market', 'Enterprise'],
+      rating: 4.2,
+      implementationTime: '4-8 months',
+      category: 'Specialist',
+      website: 'https://www.toolsgroup.com'
+    },
+    {
+      domain: 'Plan',
+      vendor: 'Palantir',
+      product: 'Foundry (Supply Chain)',
+      valueProp: 'Data integration and analytics platform for supply chain visibility and optimization.',
+      capabilities: 'Data fusion; AI/ML analytics; scenario modeling; real-time visibility',
+      useCases: 'Supply chain visibility, risk management, scenario planning',
+      strengths: 'Powerful data integration; advanced analytics; rapid insights',
+      redFlags: 'High cost; complex implementation; limited SC domain expertise',
+      successFactors: 'Data architecture; technical team; executive sponsorship',
+      references: 'Airbus, BP',
+      bestFor: ['Aerospace', 'Defense', 'Oil & Gas'],
+      companySize: ['Large Enterprise'],
+      rating: 4.0,
+      implementationTime: '8-15 months',
+      category: 'Technology Leader',
+      website: 'https://www.palantir.com/solutions/supply-chain/'
+    },
+    {
+      domain: 'Plan',
+      vendor: 'Oracle',
+      product: 'Supply Chain Planning Cloud',
+      valueProp: 'Comprehensive planning suite with advanced analytics and ML.',
+      capabilities: 'Demand planning; supply planning; S&OP; inventory optimization; ML',
+      useCases: 'Demand planning, supply planning, S&OP',
+      strengths: 'Oracle integration; comprehensive functionality; strong analytics',
+      redFlags: 'Complex implementation; high TCO; steep learning curve',
+      successFactors: 'Oracle ecosystem; dedicated planning team',
+      references: 'Tesla, FedEx',
+      bestFor: ['Manufacturing', 'Distribution', 'Retail'],
+      companySize: ['Enterprise', 'Large Enterprise'],
+      rating: 4.0,
+      implementationTime: '8-15 months',
+      category: 'Platform Leader',
+      website: 'https://www.oracle.com/applications/supply-chain-management/planning/'
+    },
+    {
+      domain: 'Plan',
+      vendor: 'Anaplan',
+      product: 'Connected Planning Platform',
+      valueProp: 'Hyperblock technology for connected planning across finance and operations.',
+      capabilities: 'Connected planning; scenario modeling; collaborative planning; real-time updates',
+      useCases: 'S&OP, financial planning, workforce planning',
+      strengths: 'User-friendly; rapid modeling; collaborative planning',
+      redFlags: 'Platform complexity for advanced use cases',
+      successFactors: 'Planning culture; model design expertise',
+      references: 'HP, Carlsberg',
+      bestFor: ['Technology', 'CPG', 'Manufacturing'],
+      companySize: ['Mid-Market', 'Enterprise'],
+      rating: 4.1,
+      implementationTime: '4-8 months',
+      category: 'Platform Player',
+      website: 'https://www.anaplan.com'
+    },
+    {
+      domain: 'Plan',
+      vendor: 'Logility',
+      product: 'Digital Supply Chain Platform',
+      valueProp: 'End-to-end supply chain planning with AI and machine learning.',
+      capabilities: 'Demand planning; supply planning; inventory optimization; S&OP',
+      useCases: 'Demand planning, supply planning, inventory optimization',
+      strengths: 'Mid-market focus; good value; comprehensive functionality',
+      redFlags: 'Limited brand recognition; smaller ecosystem',
+      successFactors: 'Mid-market needs; cost-conscious approach',
+      references: 'Big Lots, Kontoor Brands',
+      bestFor: ['Retail', 'CPG', 'Distribution'],
+      companySize: ['Mid-Market', 'Enterprise'],
+      rating: 3.9,
+      implementationTime: '6-10 months',
+      category: 'Mid-Market Leader',
+      website: 'https://www.logility.com'
+    },
+    {
+      domain: 'Plan',
+      vendor: 'GAINS',
+      product: 'Planning & Forecasting Suite',
+      valueProp: 'Advanced demand planning with inventory optimization.',
+      capabilities: 'Statistical forecasting; inventory optimization; promotion planning',
+      useCases: 'Demand planning, inventory optimization, promotion planning',
+      strengths: 'Strong forecasting algorithms; inventory focus',
+      redFlags: 'Limited market presence; aging technology',
+      successFactors: 'Inventory-heavy operations; forecasting expertise',
+      references: 'Whirlpool, Campbell Soup',
+      bestFor: ['Manufacturing', 'CPG', 'Industrial'],
+      companySize: ['Mid-Market', 'Enterprise'],
+      rating: 3.8,
+      implementationTime: '6-12 months',
+      category: 'Legacy Player',
+      website: 'https://www.gains.com'
+    },
+    {
+      domain: 'Plan',
+      vendor: 'Demand Solutions',
+      product: 'Demand Planning',
+      valueProp: 'Mid-market focused demand planning and inventory optimization.',
+      capabilities: 'Statistical forecasting; inventory planning; S&OP',
+      useCases: 'Demand planning, inventory optimization',
+      strengths: 'Mid-market focus; ease of use; good support',
+      redFlags: 'Limited advanced capabilities; smaller ecosystem',
+      successFactors: 'Mid-market needs; straightforward requirements',
+      references: 'Husqvarna, Spectrum Brands',
+      bestFor: ['Manufacturing', 'Distribution', 'Industrial'],
+      companySize: ['Small', 'Mid-Market'],
+      rating: 3.7,
+      implementationTime: '3-6 months',
+      category: 'Mid-Market Specialist',
+      website: 'https://www.demandsolutions.com'
+    },
+    {
+      domain: 'Plan',
+      vendor: 'Arkieva',
+      product: 'Supply Chain Planning Suite',
+      valueProp: 'Rapid deployment supply chain planning for mid-market.',
+      capabilities: 'Demand planning; supply planning; S&OP; inventory optimization',
+      useCases: 'S&OP, demand planning, supply planning',
+      strengths: 'Rapid implementation; mid-market focus; good value',
+      redFlags: 'Limited scalability; smaller partner network',
+      successFactors: 'Quick wins needed; mid-market requirements',
+      references: 'Dart Container, Perstorp',
+      bestFor: ['Manufacturing', 'Chemicals', 'Industrial'],
+      companySize: ['Small', 'Mid-Market'],
+      rating: 3.9,
+      implementationTime: '2-6 months',
+      category: 'Rapid Deploy',
+      website: 'https://arkieva.com'
+    },
+    {
+      domain: 'Plan',
+      vendor: 'Vanguard',
+      product: 'Predictive Planning',
+      valueProp: 'Predictive analytics for supply chain planning and forecasting.',
+      capabilities: 'Predictive analytics; demand sensing; supply planning',
+      useCases: 'Demand sensing, predictive planning',
+      strengths: 'Strong analytics; predictive focus',
+      redFlags: 'Limited market presence; niche focus',
+      successFactors: 'Analytics-driven culture; data availability',
+      references: 'Select customers',
+      bestFor: ['Manufacturing', 'Distribution'],
+      companySize: ['Mid-Market', 'Enterprise'],
+      rating: 3.6,
+      implementationTime: '4-8 months',
+      category: 'Analytics Specialist',
+      website: 'https://www.vanguardsw.com'
+    },
+    {
+      domain: 'Plan',
+      vendor: 'Llamasoft (Coupa)',
+      product: 'Supply Chain Guru',
+      valueProp: 'Network optimization and supply chain design platform.',
+      capabilities: 'Network design; optimization; scenario modeling; sustainability',
+      useCases: 'Network design, facility location, transportation optimization',
+      strengths: 'Advanced optimization; scenario modeling; sustainability',
+      redFlags: 'Requires OR expertise; complex modeling',
+      successFactors: 'Network optimization needs; analytical capabilities',
+      references: 'P&G, Unilever',
+      bestFor: ['Manufacturing', 'CPG', 'Distribution'],
+      companySize: ['Enterprise', 'Large Enterprise'],
+      rating: 4.2,
+      implementationTime: '6-12 months',
+      category: 'Optimization Leader',
+      website: 'https://www.coupa.com/products/supply-chain-design-and-planning'
+    },
+
+    // SOURCE DOMAIN (15 vendors)
+    {
+      domain: 'Source',
+      vendor: 'SAP Ariba',
+      product: 'Procurement Suite',
+      valueProp: 'End-to-end procurement with supplier network and AI-driven insights.',
+      capabilities: 'Supplier discovery; contract management; spend analytics; guided sourcing',
+      useCases: 'Strategic sourcing, supplier management, contract lifecycle',
+      strengths: 'Massive supplier network; ERP integration',
+      redFlags: 'Complex implementation; high TCO',
+      successFactors: 'SAP ecosystem; dedicated procurement team',
+      references: 'Unilever, Siemens',
+      bestFor: ['Manufacturing', 'CPG', 'Industrial'],
+      companySize: ['Enterprise', 'Large Enterprise'],
+      rating: 4.3,
+      implementationTime: '6-12 months',
+      category: 'Market Leader',
+      website: 'https://www.sap.com/products/spend-management/procurement.html'
+    },
+    {
+      domain: 'Source',
+      vendor: 'Coupa',
+      product: 'Business Spend Management',
+      valueProp: 'Unified spend management platform with community-driven insights.',
+      capabilities: 'P2P automation; spend analysis; supplier risk; AI recommendations',
+      useCases: 'Procurement, AP automation, expense management',
+      strengths: 'User-friendly; strong ROI; comprehensive suite',
+      redFlags: 'Can be expensive for complex orgs',
+      successFactors: 'Change management; supplier onboarding',
+      references: 'Salesforce, Adobe',
+      bestFor: ['Technology', 'Services', 'Healthcare'],
+      companySize: ['Mid-Market', 'Enterprise'],
+      rating: 4.7,
+      implementationTime: '3-6 months',
+      category: 'Best in Class',
+      website: 'https://www.coupa.com'
+    },
+    {
+      domain: 'Source',
+      vendor: 'Oracle',
+      product: 'Procurement Cloud',
+      valueProp: 'Comprehensive procurement suite with supplier qualification and risk management.',
+      capabilities: 'Strategic sourcing; supplier qualification; contract management; spend analytics',
+      useCases: 'Strategic sourcing, supplier onboarding, contract lifecycle',
+      strengths: 'Complete suite; strong supplier portal; ERP integration',
+      redFlags: 'Complex configuration; lengthy implementations',
+      successFactors: 'Oracle ecosystem; procurement expertise',
+      references: 'Ford, Schneider Electric',
+      bestFor: ['Manufacturing', 'Industrial', 'Utilities'],
+      companySize: ['Enterprise', 'Large Enterprise'],
+      rating: 4.2,
+      implementationTime: '8-12 months',
+      category: 'Platform Leader',
+      website: 'https://www.oracle.com/applications/supply-chain-management/procurement/'
+    },
+    {
+      domain: 'Source',
+      vendor: 'Jaggaer',
+      product: 'ONE Platform',
+      valueProp: 'Source-to-settle platform with advanced supplier management.',
+      capabilities: 'Strategic sourcing; supplier management; contract lifecycle; spend analytics',
+      useCases: 'Sourcing, supplier qualification, contract management',
+      strengths: 'Strong sourcing capabilities; good supplier portal',
+      redFlags: 'Limited market presence; integration challenges',
+      successFactors: 'Procurement-focused organization; supplier engagement',
+      references: 'Duke Energy, Alcoa',
+      bestFor: ['Industrial', 'Utilities', 'Government'],
+      companySize: ['Mid-Market', 'Enterprise'],
+      rating: 4.1,
+      implementationTime: '6-10 months',
+      category: 'Challenger',
+      website: 'https://www.jaggaer.com'
+    },
+    {
+      domain: 'Source',
+      vendor: 'Ivalua',
+      product: 'Procurement Suite',
+      valueProp: 'Comprehensive source-to-pay platform with strong configurability.',
+      capabilities: 'Strategic sourcing; P2P; supplier portal; spend analytics; risk management',
+      useCases: 'End-to-end procurement, supplier management',
+      strengths: 'Highly configurable; strong European presence; good UX',
+      redFlags: 'Smaller ecosystem; limited AI/ML capabilities',
+      successFactors: 'Procurement transformation mindset; configuration expertise',
+      references: 'Bouygues, Airbus',
+      bestFor: ['Industrial', 'Construction', 'Government'],
+      companySize: ['Mid-Market', 'Enterprise'],
+      rating: 4.3,
+      implementationTime: '6-9 months',
+      category: 'Strong Performer',
+      website: 'https://www.ivalua.com'
+    },
+    {
+      domain: 'Source',
+      vendor: 'GEP',
+      product: 'SMART Platform',
+      valueProp: 'AI-powered procurement platform with integrated services.',
+      capabilities: 'AI-driven sourcing; spend analytics; supplier management; contract intelligence',
+      useCases: 'Strategic sourcing, spend optimization, supplier risk',
+      strengths: 'Strong AI/ML; services integration; rapid deployment',
+      redFlags: 'Platform still maturing; limited enterprise references',
+      successFactors: 'Willingness to adopt AI; services partnership',
+      references: 'Mars, Kellogg',
+      bestFor: ['CPG', 'Manufacturing', 'Services'],
+      companySize: ['Mid-Market', 'Enterprise'],
+      rating: 4.0,
+      implementationTime: '4-8 months',
+      category: 'Rising Star',
+      website: 'https://www.gep.com/software'
+    },
+    {
+      domain: 'Source',
+      vendor: 'Zycus',
+      product: 'Procurement Performance Platform',
+      valueProp: 'Comprehensive procurement suite with strong sourcing and contract management.',
+      capabilities: 'Strategic sourcing; contract management; supplier management; spend analytics',
+      useCases: 'Strategic sourcing, contract management, supplier management',
+      strengths: 'Strong sourcing capabilities; good value proposition',
+      redFlags: 'Limited brand recognition; integration challenges',
+      successFactors: 'Cost-conscious procurement; strong sourcing needs',
+      references: 'Coca-Cola, Airtel',
+      bestFor: ['Manufacturing', 'Telecom', 'Services'],
+      companySize: ['Mid-Market', 'Enterprise'],
+      rating: 3.9,
+      implementationTime: '6-10 months',
+      category: 'Value Leader',
+      website: 'https://www.zycus.com'
+    },
+    {
+      domain: 'Source',
+      vendor: 'Basware',
+      product: 'Purchase-to-Pay Suite',
+      valueProp: 'End-to-end P2P automation with strong AP capabilities.',
+      capabilities: 'P2P automation; invoice processing; supplier network; spend analytics',
+      useCases: 'P2P automation, invoice processing, supplier management',
+      strengths: 'Strong P2P focus; good automation; European strength',
+      redFlags: 'Limited sourcing capabilities; market challenges',
+      successFactors: 'P2P automation needs; European operations',
+      references: 'Volvo, Nokia',
+      bestFor: ['Manufacturing', 'Industrial', 'Services'],
+      companySize: ['Mid-Market', 'Enterprise'],
+      rating: 3.8,
+      implementationTime: '4-8 months',
+      category: 'P2P Specialist',
+      website: 'https://www.basware.com'
+    },
+    {
+      domain: 'Source',
+      vendor: 'Determine',
+      product: 'Source-to-Contract',
+      valueProp: 'Comprehensive sourcing and contract management platform.',
+      capabilities: 'Strategic sourcing; contract management; supplier management; spend analytics',
+      useCases: 'Strategic sourcing, contract lifecycle management',
+      strengths: 'Strong sourcing and contract capabilities',
+      redFlags: 'Limited market presence; technology refresh needed',
+      successFactors: 'Complex sourcing requirements; contract focus',
+      references: 'Select enterprise customers',
+      bestFor: ['Industrial', 'Government', 'Services'],
+      companySize: ['Mid-Market', 'Enterprise'],
+      rating: 3.7,
+      implementationTime: '6-12 months',
+      category: 'Legacy Player',
+      website: 'https://www.determine.com'
+    },
+    {
+      domain: 'Source',
+      vendor: 'Proactis',
+      product: 'Spend Control Platform',
+      valueProp: 'Spend control and procurement platform for mid-market.',
+      capabilities: 'P2P; sourcing; contract management; spend analytics',
+      useCases: 'Spend control, P2P automation, sourcing',
+      strengths: 'Mid-market focus; good value; ease of use',
+      redFlags: 'Limited scalability; smaller ecosystem',
+      successFactors: 'Mid-market needs; spend control focus',
+      references: 'Various mid-market customers',
+      bestFor: ['Government', 'Healthcare', 'Education'],
+      companySize: ['Small', 'Mid-Market'],
+      rating: 3.6,
+      implementationTime: '3-6 months',
+      category: 'Mid-Market Player',
+      website: 'https://www.proactis.com'
+    },
+    {
+      domain: 'Source',
+      vendor: 'Procurify',
+      product: 'Spend Management',
+      valueProp: 'Modern spend management for growing companies.',
+      capabilities: 'Requisition management; P2P; spend analytics; mobile app',
+      useCases: 'Spend control, requisition management, P2P',
+      strengths: 'Modern UX; rapid deployment; good value',
+      redFlags: 'Limited enterprise features; newer player',
+      successFactors: 'Growing companies; modern UX needs',
+      references: 'Various SMB customers',
+      bestFor: ['Technology', 'Services', 'Healthcare'],
+      companySize: ['Small', 'Mid-Market'],
+      rating: 4.1,
+      implementationTime: '1-3 months',
+      category: 'Modern Challenger',
+      website: 'https://www.procurify.com'
+    },
+    {
+      domain: 'Source',
+      vendor: 'Synertrade',
+      product: 'Accelerate Platform',
+      valueProp: 'Accelerated procurement transformation platform.',
+      capabilities: 'Strategic sourcing; P2P; contract management; supplier management',
+      useCases: 'Procurement transformation, sourcing, P2P',
+      strengths: 'Rapid deployment; good functionality; European focus',
+      redFlags: 'Limited US presence; smaller ecosystem',
+      successFactors: 'European operations; rapid deployment needs',
+      references: 'Various European customers',
+      bestFor: ['Manufacturing', 'Industrial', 'Services'],
+      companySize: ['Mid-Market', 'Enterprise'],
+      rating: 3.8,
+      implementationTime: '3-6 months',
+      category: 'Regional Player',
+      website: 'https://www.synertrade.com'
+    },
+    {
+      domain: 'Source',
+      vendor: 'ProcurementExpress',
+      product: 'eProcurement Platform',
+      valueProp: 'Cloud-based eProcurement for mid-market organizations.',
+      capabilities: 'eProcurement; P2P; supplier management; spend analytics',
+      useCases: 'eProcurement, P2P automation',
+      strengths: 'Ease of use; rapid deployment; good support',
+      redFlags: 'Limited advanced features; smaller scale',
+      successFactors: 'Straightforward requirements; quick deployment',
+      references: 'Various mid-market customers',
+      bestFor: ['Healthcare', 'Education', 'Government'],
+      companySize: ['Small', 'Mid-Market'],
+      rating: 3.5,
+      implementationTime: '2-4 months',
+      category: 'SMB Specialist',
+      website: 'https://www.procurementexpress.com'
+    },
+    {
+      domain: 'Source',
+      vendor: 'Rosslyn Data Technologies',
+      product: 'Spend Analytics Platform',
+      valueProp: 'Advanced spend analytics and procurement intelligence.',
+      capabilities: 'Spend analytics; procurement intelligence; risk management; benchmarking',
+      useCases: 'Spend analysis, procurement intelligence, supplier risk',
+      strengths: 'Strong analytics; data focus; benchmarking',
+      redFlags: 'Analytics-only; requires other systems',
+      successFactors: 'Data-driven procurement; analytics focus',
+      references: 'Various enterprise customers',
+      bestFor: ['Manufacturing', 'Government', 'Services'],
+      companySize: ['Mid-Market', 'Enterprise'],
+      rating: 3.9,
+      implementationTime: '2-4 months',
+      category: 'Analytics Specialist',
+      website: 'https://www.rosslyndatatechnologies.com'
+    },
+    {
+      domain: 'Source',
+      vendor: 'Tungsten Network',
+      product: 'Invoice Automation',
+      valueProp: 'Invoice processing and supplier network platform.',
+      capabilities: 'Invoice automation; supplier network; P2P; analytics',
+      useCases: 'Invoice processing, supplier onboarding, P2P',
+      strengths: 'Strong invoice processing; supplier network; automation',
+      redFlags: 'Limited sourcing capabilities; transaction-focused',
+      successFactors: 'High invoice volumes; supplier network benefits',
+      references: 'Various enterprise customers',
+      bestFor: ['Manufacturing', 'Services', 'Distribution'],
+      companySize: ['Mid-Market', 'Enterprise'],
+      rating: 3.7,
+      implementationTime: '3-6 months',
+      category: 'Network Specialist',
+      website: 'https://www.tungsten-network.com'
+    },
+
+    // MAKE DOMAIN (8 vendors)
+    {
+      domain: 'Make',
+      vendor: 'Aveva',
+      product: 'Manufacturing Operations',
+      valueProp: 'Industrial software for manufacturing operations and asset optimization.',
+      capabilities: 'MES/MOM; asset performance; digital twin; AI analytics',
+      useCases: 'Production optimization, quality management, predictive maintenance',
+      strengths: 'Deep industry expertise; proven at scale',
+      redFlags: 'Complex implementation; requires OT integration',
+      successFactors: 'Strong IT/OT collaboration; phased rollout',
+      references: 'Shell, BP',
+      bestFor: ['Process Industries', 'Oil & Gas', 'Chemicals'],
+      companySize: ['Enterprise', 'Large Enterprise'],
+      rating: 4.4,
+      implementationTime: '6-18 months',
+      category: 'Industry Leader',
+      website: 'https://www.aveva.com'
+    },
+    {
+      domain: 'Make',
+      vendor: 'Siemens',
+      product: 'Opcenter (MES/MOM)',
+      valueProp: 'Manufacturing execution and operations management with digital factory integration.',
+      capabilities: 'MES; quality management; genealogy tracking; production scheduling',
+      useCases: 'Production execution, quality control, shop floor management',
+      strengths: 'Strong manufacturing domain expertise; Siemens ecosystem',
+      redFlags: 'Complex configuration; high implementation cost',
+      successFactors: 'Manufacturing engineering support; phased implementation',
+      references: 'BMW, Bosch',
+      bestFor: ['Automotive', 'Industrial', 'Electronics'],
+      companySize: ['Enterprise', 'Large Enterprise'],
+      rating: 4.3,
+      implementationTime: '8-15 months',
+      category: 'Platform Leader',
+      website: 'https://www.siemens.com'
+    },
+    {
+      domain: 'Make',
+      vendor: 'Rockwell Automation',
+      product: 'FactoryTalk ProductionCentre',
+      valueProp: 'Integrated MES with strong automation and control system integration.',
+      capabilities: 'MES; batch management; genealogy; performance analytics',
+      useCases: 'Batch processing, production tracking, regulatory compliance',
+      strengths: 'Strong automation integration; regulatory compliance focus',
+      redFlags: 'Rockwell ecosystem dependency; limited flexibility',
+      successFactors: 'Rockwell automation infrastructure; regulatory requirements',
+      references: 'Coca-Cola, Pfizer',
+      bestFor: ['Food & Beverage', 'Pharma', 'Chemicals'],
+      companySize: ['Mid-Market', 'Enterprise'],
+      rating: 4.2,
+      implementationTime: '6-12 months',
+      category: 'Automation Leader',
+      website: 'https://www.rockwellautomation.com'
+    },
+    {
+      domain: 'Make',
+      vendor: 'Dassault Systemes',
+      product: 'DELMIA Manufacturing',
+      valueProp: 'Digital manufacturing and production planning with 3D simulation.',
+      capabilities: 'Manufacturing planning; 3D simulation; resource optimization; ergonomics',
+      useCases: 'Manufacturing planning, line balancing, production simulation',
+      strengths: '3D modeling strength; comprehensive manufacturing suite',
+      redFlags: 'High complexity; requires specialized skills',
+      successFactors: 'Engineering collaboration; 3D modeling expertise',
+      references: 'Airbus, Tesla',
+      bestFor: ['Aerospace', 'Automotive', 'Industrial'],
+      companySize: ['Enterprise', 'Large Enterprise'],
+      rating: 4.1,
+      implementationTime: '8-18 months',
+      category: 'Technology Leader',
+      website: 'https://www.3ds.com'
+    },
+    {
+      domain: 'Make',
+      vendor: 'GE Digital',
+      product: 'Proficy Manufacturing Suite',
+      valueProp: 'Comprehensive manufacturing software suite with industrial IoT integration.',
+      capabilities: 'MES; SCADA; historian; analytics; asset performance',
+      useCases: 'Manufacturing operations, asset optimization, predictive analytics',
+      strengths: 'Industrial IoT strength; comprehensive suite; strong analytics',
+      redFlags: 'GE Digital strategy uncertainty; complex architecture',
+      successFactors: 'Industrial IoT infrastructure; data analytics capability',
+      references: 'General Electric, Schneider Electric',
+      bestFor: ['Industrial', 'Energy', 'Process Industries'],
+      companySize: ['Enterprise', 'Large Enterprise'],
+      rating: 4.0,
+      implementationTime: '6-15 months',
+      category: 'Industrial IoT Leader',
+      website: 'https://www.ge.com/digital'
+    },
+    {
+      domain: 'Make',
+      vendor: 'Honeywell',
+      product: 'Forge Manufacturing',
+      valueProp: 'Industrial cloud platform for manufacturing operations and performance.',
+      capabilities: 'MES; performance management; asset optimization; predictive analytics',
+      useCases: 'Manufacturing operations, performance optimization, asset management',
+      strengths: 'Industrial expertise; cloud platform; strong analytics',
+      redFlags: 'Platform still maturing; integration complexity',
+      successFactors: 'Industrial operations; cloud adoption; performance focus',
+      references: 'Various process industry customers',
+      bestFor: ['Process Industries', 'Oil & Gas', 'Chemicals'],
+      companySize: ['Enterprise', 'Large Enterprise'],
+      rating: 3.9,
+      implementationTime: '6-12 months',
+      category: 'Industrial Cloud',
+      website: 'https://www.honeywell.com/us/en/products-services/process-solutions/project-solutions/honeywell-forge'
+    },
+    {
+      domain: 'Make',
+      vendor: 'Schneider Electric',
+      product: 'AVEVA System Platform',
+      valueProp: 'Industrial automation platform with MES and SCADA integration.',
+      capabilities: 'MES; SCADA; HMI; industrial automation; analytics',
+      useCases: 'Industrial automation, manufacturing operations, process control',
+      strengths: 'Strong automation focus; industrial expertise',
+      redFlags: 'Complex architecture; requires automation expertise',
+      successFactors: 'Industrial automation needs; Schneider ecosystem',
+      references: 'Various industrial customers',
+      bestFor: ['Industrial', 'Process Industries', 'Infrastructure'],
+      companySize: ['Enterprise', 'Large Enterprise'],
+      rating: 4.0,
+      implementationTime: '6-15 months',
+      category: 'Automation Platform',
+      website: 'https://www.se.com'
+    },
+    {
+      domain: 'Make',
+      vendor: 'Emerson',
+      product: 'DeltaV MES',
+      valueProp: 'Manufacturing execution system for process industries.',
+      capabilities: 'MES; batch management; recipe management; regulatory compliance',
+      useCases: 'Batch processing, recipe management, regulatory compliance',
+      strengths: 'Process industry focus; regulatory compliance; batch expertise',
+      redFlags: 'Process-centric; limited discrete manufacturing',
+      successFactors: 'Process manufacturing; regulatory requirements; batch operations',
+      references: 'Various process industry customers',
+      bestFor: ['Chemicals', 'Pharma', 'Food & Beverage'],
+      companySize: ['Enterprise', 'Large Enterprise'],
+      rating: 4.1,
+      implementationTime: '6-12 months',
+      category: 'Process Specialist',
+      website: 'https://www.emerson.com'
+    },
+
+    // DELIVER DOMAIN (5 vendors)
+    {
+      domain: 'Deliver',
+      vendor: 'Manhattan Associates',
+      product: 'Supply Chain Suite',
+      valueProp: 'Omnichannel fulfillment and distribution optimization.',
+      capabilities: 'WMS; TMS; OMS; distributed inventory; ML optimization',
+      useCases: 'Warehouse management, transportation, order fulfillment',
+      strengths: 'Proven in complex operations; strong ROI',
+      redFlags: 'Implementation complexity; change management',
+      successFactors: 'Experienced SI; phased approach',
+      references: 'Target, Home Depot',
+      bestFor: ['Retail', 'E-commerce', 'Distribution'],
+      companySize: ['Enterprise', 'Large Enterprise'],
+      rating: 4.6,
+      implementationTime: '6-12 months',
+      category: 'Market Leader',
+      website: 'https://www.manh.com'
+    },
+    {
+      domain: 'Deliver',
+      vendor: 'Blue Yonder',
+      product: 'Luminate Logistics',
+      valueProp: 'AI-powered warehouse and transportation management with autonomous supply chains.',
+      capabilities: 'WMS; TMS; yard management; AI optimization; autonomous operations',
+      useCases: 'Warehouse automation, transportation optimization, fulfillment',
+      strengths: 'Strong AI/ML; autonomous capabilities; proven scale',
+      redFlags: 'JDA legacy complexity; high implementation effort',
+      successFactors: 'Automation readiness; data quality; change management',
+      references: 'Walmart, DHL',
+      bestFor: ['Retail', 'Logistics', 'Distribution'],
+      companySize: ['Enterprise', 'Large Enterprise'],
+      rating: 4.4,
+      implementationTime: '8-15 months',
+      category: 'AI Leader',
+      website: 'https://blueyonder.com'
+    },
+    {
+      domain: 'Deliver',
+      vendor: 'Oracle',
+      product: 'Transportation Management',
+      valueProp: 'Comprehensive TMS with global logistics and carrier network integration.',
+      capabilities: 'Transportation planning; carrier management; freight audit; global trade',
+      useCases: 'Transportation optimization, carrier management, freight audit',
+      strengths: 'Global capabilities; strong carrier network; ERP integration',
+      redFlags: 'Complex configuration; lengthy implementations',
+      successFactors: 'Oracle ecosystem; global operations; carrier relationships',
+      references: 'FedEx, Expeditors',
+      bestFor: ['Logistics', 'Manufacturing', 'Global Trade'],
+      companySize: ['Enterprise', 'Large Enterprise'],
+      rating: 4.2,
+      implementationTime: '6-12 months',
+      category: 'Platform Leader',
+      website: 'https://www.oracle.com'
+    },
+    {
+      domain: 'Deliver',
+      vendor: 'C.H. Robinson',
+      product: 'Navisphere',
+      valueProp: 'TMS platform with integrated 3PL services and carrier network.',
+      capabilities: 'TMS; carrier network; freight marketplace; visibility; analytics',
+      useCases: 'Transportation procurement, carrier management, freight optimization',
+      strengths: 'Massive carrier network; services integration; market insights',
+      redFlags: 'Services-focused; potential conflict of interest',
+      successFactors: 'Hybrid model acceptance; carrier diversity needs',
+      references: 'General Mills, Land O Lakes',
+      bestFor: ['Manufacturing', 'CPG', 'Agriculture'],
+      companySize: ['Mid-Market', 'Enterprise'],
+      rating: 4.1,
+      implementationTime: '3-6 months',
+      category: 'Service Leader',
+      website: 'https://www.chrobinson.com'
+    },
+    {
+      domain: 'Deliver',
+      vendor: 'project44',
+      product: 'Movement Platform',
+      valueProp: 'Real-time visibility and predictive analytics for global supply chains.',
+      capabilities: 'Real-time tracking; predictive analytics; carrier integration; API platform',
+      useCases: 'Supply chain visibility, carrier integration, customer notifications',
+      strengths: 'Strong API platform; extensive carrier network; real-time data',
+      redFlags: 'Newer player; limited TMS functionality',
+      successFactors: 'API-first approach; carrier onboarding; integration capabilities',
+      references: 'Home Depot, Schneider',
+      bestFor: ['E-commerce', 'Retail', 'Logistics'],
+      companySize: ['Mid-Market', 'Enterprise'],
+      rating: 4.3,
+      implementationTime: '2-6 months',
+      category: 'Visibility Leader',
+      website: 'https://www.project44.com'
+    },
+
+    // RETURN DOMAIN (5 vendors)
+    {
+      domain: 'Return',
+      vendor: 'Optoro',
+      product: 'Returns Optimization Platform',
+      valueProp: 'AI-powered returns processing and disposition optimization.',
+      capabilities: 'Returns processing; disposition optimization; liquidation; sustainability',
+      useCases: 'Returns management, liquidation optimization, sustainability reporting',
+      strengths: 'Returns-focused; strong algorithms; sustainability metrics',
+      redFlags: 'Niche focus; limited integration options',
+      successFactors: 'High returns volumes; sustainability goals',
+      references: 'Best Buy, IKEA',
+      bestFor: ['Retail', 'E-commerce', 'Electronics'],
+      companySize: ['Mid-Market', 'Enterprise'],
+      rating: 4.2,
+      implementationTime: '3-8 months',
+      category: 'Returns Specialist',
+      website: 'https://www.optoro.com'
+    },
+    {
+      domain: 'Return',
+      vendor: 'ReverseLogix',
+      product: 'Returns Management System',
+      valueProp: 'Comprehensive returns management with workflow automation.',
+      capabilities: 'Returns processing; RMA management; refurbishment tracking; analytics',
+      useCases: 'RMA processing, warranty claims, refurbishment operations',
+      strengths: 'Comprehensive returns focus; workflow flexibility',
+      redFlags: 'Smaller ecosystem; integration challenges',
+      successFactors: 'Complex returns processes; refurbishment operations',
+      references: 'Lenovo, Microsoft',
+      bestFor: ['Technology', 'Electronics', 'Industrial'],
+      companySize: ['Mid-Market', 'Enterprise'],
+      rating: 4.0,
+      implementationTime: '4-8 months',
+      category: 'RMA Specialist',
+      website: 'https://www.reverselogix.com'
+    },
+    {
+      domain: 'Return',
+      vendor: 'SAP',
+      product: 'Customer Returns Management',
+      valueProp: 'Integrated returns processing within SAP ecosystem.',
+      capabilities: 'Returns processing; credit management; refurbishment; analytics',
+      useCases: 'Returns processing, warranty management, credit processing',
+      strengths: 'SAP integration; comprehensive functionality',
+      redFlags: 'SAP dependency; customization complexity',
+      successFactors: 'SAP ecosystem; integrated business processes',
+      references: 'Adidas, Philips',
+      bestFor: ['Manufacturing', 'CPG', 'Industrial'],
+      companySize: ['Enterprise', 'Large Enterprise'],
+      rating: 3.9,
+      implementationTime: '6-12 months',
+      category: 'ERP Integrated',
+      website: 'https://www.sap.com'
+    },
+    {
+      domain: 'Return',
+      vendor: 'Inmar Intelligence',
+      product: 'Returns & Recall Solutions',
+      valueProp: 'Returns processing and product recall management platform.',
+      capabilities: 'Returns processing; recall management; claims processing; analytics',
+      useCases: 'Product recalls, returns processing, claims management',
+      strengths: 'Recall expertise; regulatory compliance; network services',
+      redFlags: 'Services-heavy model; limited technology differentiation',
+      successFactors: 'Recall requirements; compliance needs; network benefits',
+      references: 'Johnson & Johnson, Nestle',
+      bestFor: ['CPG', 'Food & Beverage', 'Pharma'],
+      companySize: ['Enterprise', 'Large Enterprise'],
+      rating: 4.1,
+      implementationTime: '3-6 months',
+      category: 'Recall Specialist',
+      website: 'https://www.inmar.com'
+    },
+    {
+      domain: 'Return',
+      vendor: 'Newmine',
+      product: 'Returns Intelligence',
+      valueProp: 'AI-powered returns analytics and fraud detection.',
+      capabilities: 'Returns analytics; fraud detection; customer insights; predictive modeling',
+      useCases: 'Returns fraud prevention, customer analytics, returns optimization',
+      strengths: 'AI/ML focus; fraud detection; customer insights',
+      redFlags: 'Analytics-only solution; newer player',
+      successFactors: 'High returns volumes; fraud concerns; analytics focus',
+      references: 'Various retail customers',
+      bestFor: ['Retail', 'E-commerce', 'Fashion'],
+      companySize: ['Mid-Market', 'Enterprise'],
+      rating: 3.8,
+      implementationTime: '2-4 months',
+      category: 'Analytics Specialist',
+      website: 'https://www.newmine.com'
+    },
+
+    // ENABLE DOMAIN (4 vendors)
+    {
+      domain: 'Enable',
+      vendor: 'Celonis',
+      product: 'Process Intelligence',
+      valueProp: 'Process mining to expose supply chain bottlenecks and automate fixes.',
+      capabilities: 'Event log mining; ML next-best-action; GenAI copilots; process automation',
+      useCases: 'Order-to-cash, procure-to-pay, MRP exception mining, process optimization',
+      strengths: 'Fast ROI on process waste; cross-process visibility; strong ecosystem',
+      redFlags: 'Not domain-specific; requires process mining expertise',
+      successFactors: 'Process owners; automation readiness; data accessibility',
+      references: 'thyssenkrupp, Siemens, BMW',
+      bestFor: ['Manufacturing', 'Industrial', 'Process Industries'],
+      companySize: ['Enterprise', 'Large Enterprise'],
+      rating: 4.4,
+      implementationTime: '2-4 months',
+      category: 'Process Mining Leader',
+      website: 'https://www.celonis.com'
+    },
+    {
+      domain: 'Enable',
+      vendor: 'Microsoft',
+      product: 'Supply Chain Platform',
+      valueProp: 'Cloud platform with AI/IoT integration for supply chain digitization.',
+      capabilities: 'IoT integration; AI/ML; cloud platform; collaboration tools',
+      useCases: 'Digital transformation, IoT analytics, collaboration platforms',
+      strengths: 'Microsoft ecosystem; cloud infrastructure; AI capabilities',
+      redFlags: 'Limited SC domain expertise; integration complexity',
+      successFactors: 'Microsoft ecosystem; cloud-first strategy; technical capabilities',
+      references: 'Maersk, Coca-Cola',
+      bestFor: ['Technology', 'Manufacturing', 'Logistics'],
+      companySize: ['Enterprise', 'Large Enterprise'],
+      rating: 4.1,
+      implementationTime: '6-12 months',
+      category: 'Cloud Platform Leader',
+      website: 'https://www.microsoft.com'
+    },
+    {
+      domain: 'Enable',
+      vendor: 'AWS',
+      product: 'Supply Chain Solutions',
+      valueProp: 'Cloud infrastructure and AI services for supply chain applications.',
+      capabilities: 'Cloud infrastructure; AI/ML services; IoT; data analytics',
+      useCases: 'Digital infrastructure, data analytics, AI/ML applications',
+      strengths: 'Leading cloud platform; comprehensive services; scalability',
+      redFlags: 'Not SC-specific; requires technical expertise',
+      successFactors: 'Cloud-first strategy; technical team; AWS ecosystem',
+      references: 'Moderna, Rivian',
+      bestFor: ['Technology', 'Startups', 'Digital Natives'],
+      companySize: ['Mid-Market', 'Enterprise', 'Large Enterprise'],
+      rating: 4.3,
+      implementationTime: '3-12 months',
+      category: 'Infrastructure Leader',
+      website: 'https://aws.amazon.com'
+    },
     {
       domain: 'Enable',
       vendor: 'Snowflake',
@@ -127,24 +1019,24 @@ const SupplyChainDashboard = () => {
   ];
   // ===== END DATA =====
 
-  // Simple filtering so the UI shows something useful
+  // ===== Filtering =====
   const filtered = useMemo(() => {
     const term = searchTerm.trim().toLowerCase();
     return vendorData.filter(v => {
-      const matchDomain = selectedDomain === 'All' || v.domain === selectedDomain;
-      const matchTerm =
+      const domainOk = selectedDomain === 'All' || v.domain === selectedDomain;
+      const termOk =
         !term ||
         v.vendor.toLowerCase().includes(term) ||
         v.product.toLowerCase().includes(term) ||
         v.valueProp.toLowerCase().includes(term);
-      return matchDomain && matchTerm;
+      return domainOk && termOk;
     });
   }, [searchTerm, selectedDomain]);
 
-  // ===== RENDER =====
+  // ===== UI =====
   return (
     <div style={{ padding: 16, fontFamily: 'system-ui, -apple-system, Segoe UI, Roboto, Arial' }}>
-      <header style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
+      <header style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14 }}>
         <h1 style={{ margin: 0, fontSize: 22 }}>Supply Chain Vendors</h1>
         <span style={{ opacity: 0.7 }}>({filtered.length} shown)</span>
       </header>
@@ -153,14 +1045,18 @@ const SupplyChainDashboard = () => {
         <div style={{ display: 'flex', alignItems: 'center', gap: 6, border: '1px solid #e5e7eb', borderRadius: 8, padding: '6px 10px' }}>
           <Search />
           <input
-            placeholder="Search vendor/product/value prop…"
+            placeholder="Search vendor / product / value prop…"
             value={searchTerm}
             onChange={(e:any) => setSearchTerm(e.target.value)}
-            style={{ outline: 'none', border: 'none', minWidth: 220 }}
+            style={{ outline: 'none', border: 'none', minWidth: 240 }}
           />
         </div>
 
-        <select value={selectedDomain} onChange={(e:any) => setSelectedDomain(e.target.value)} style={{ padding: '6px 10px', borderRadius: 8 }}>
+        <select
+          value={selectedDomain}
+          onChange={(e:any) => setSelectedDomain(e.target.value)}
+          style={{ padding: '6px 10px', borderRadius: 8, border: '1px solid #e5e7eb' }}
+        >
           <option>All</option>
           <option>Plan</option>
           <option>Source</option>
@@ -189,5 +1085,5 @@ const SupplyChainDashboard = () => {
   );
 };
 
-// Expose the component for index.html to mount
+// Expose for index.html to mount
 (window as any).App = SupplyChainDashboard;
