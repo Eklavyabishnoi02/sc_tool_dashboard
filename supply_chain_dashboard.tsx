@@ -1,23 +1,26 @@
+
+// ===== Hosting shim: remove imports and expose React hooks & icon stubs =====
 const { useState, useEffect, useMemo } = React;
 
-
-const makeIcon = (ch: string) => () => React.createElement('span', { style: { marginRight: 6 } }, ch);
-const Search = makeIcon('🔎');
-const Filter = makeIcon('🧰');
-const Download = makeIcon('⬇️');
-const ArrowRight = makeIcon('➡️');
-const Star = makeIcon('⭐');
-const AlertTriangle = makeIcon('⚠️');
-const CheckCircle = makeIcon('✅');
-const Users = makeIcon('👥');
-const Zap = makeIcon('⚡');
-const Target = makeIcon('🎯');
-const Building = makeIcon('🏢');
-const Smartphone = makeIcon('📱');
-const Monitor = makeIcon('🖥️');
-const FileText = makeIcon('📄');
-
-
+// Simple icon component that accepts className/style
+const IconStub = ({ label = '', children, className = '', style = {} }: any) => (
+  React.createElement('span', { className, style: { marginRight: 6, ...style }, role: 'img', 'aria-label': label }, children)
+);
+const Search = (p:any) => React.createElement(IconStub, {label:'search', ...p}, '🔎');
+const Filter = (p:any) => React.createElement(IconStub, {label:'filter', ...p}, '🧰');
+const Download = (p:any) => React.createElement(IconStub, {label:'download', ...p}, '⬇️');
+const ArrowRight = (p:any) => React.createElement(IconStub, {label:'arrow-right', ...p}, '➡️');
+const Star = (p:any) => React.createElement(IconStub, {label:'star', ...p}, '⭐');
+const AlertTriangle = (p:any) => React.createElement(IconStub, {label:'alert', ...p}, '⚠️');
+const CheckCircle = (p:any) => React.createElement(IconStub, {label:'check', ...p}, '✅');
+const Users = (p:any) => React.createElement(IconStub, {label:'users', ...p}, '👥');
+const Zap = (p:any) => React.createElement(IconStub, {label:'zap', ...p}, '⚡');
+const Target = (p:any) => React.createElement(IconStub, {label:'target', ...p}, '🎯');
+const Building = (p:any) => React.createElement(IconStub, {label:'building', ...p}, '🏢');
+const Smartphone = (p:any) => React.createElement(IconStub, {label:'smartphone', ...p}, '📱');
+const Monitor = (p:any) => React.createElement(IconStub, {label:'monitor', ...p}, '🖥️');
+const FileText = (p:any) => React.createElement(IconStub, {label:'file', ...p}, '📄');
+// ===========================================================================
 
 const SupplyChainDashboard = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -1013,4 +1016,5 @@ const SupplyChainDashboard = () => {
     }
   ];
 
-  (window as any).App = SupplyChainDashboard;
+// Expose the component for index.html to mount
+;(window as any).App = SupplyChainDashboard;
