@@ -1,5 +1,23 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { Search, Filter, Download, ArrowRight, Star, AlertTriangle, CheckCircle, Users, Zap, Target, Building, Smartphone, Monitor, FileText } from 'lucide-react';
+const { useState, useEffect, useMemo } = React;
+
+
+const makeIcon = (ch: string) => () => React.createElement('span', { style: { marginRight: 6 } }, ch);
+const Search = makeIcon('🔎');
+const Filter = makeIcon('🧰');
+const Download = makeIcon('⬇️');
+const ArrowRight = makeIcon('➡️');
+const Star = makeIcon('⭐');
+const AlertTriangle = makeIcon('⚠️');
+const CheckCircle = makeIcon('✅');
+const Users = makeIcon('👥');
+const Zap = makeIcon('⚡');
+const Target = makeIcon('🎯');
+const Building = makeIcon('🏢');
+const Smartphone = makeIcon('📱');
+const Monitor = makeIcon('🖥️');
+const FileText = makeIcon('📄');
+
+
 
 const SupplyChainDashboard = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -994,3 +1012,5 @@ const SupplyChainDashboard = () => {
       website: 'https://www.snowflake.com'
     }
   ];
+
+  (window as any).App = SupplyChainDashboard;
