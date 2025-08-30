@@ -31,9 +31,10 @@ const SupplyChainDashboard = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedDomain, setSelectedDomain] = useState<'All' | Vendor['domain']>('All');
 
-  // ===== DATA (your full list; odd characters fixed like “item‚ -location” → “item-location”) =====
+  // ===== DATA (54 vendors) =====
+  // Note: fixed odd punctuation like “item‚ -location” -> “item-location”, and removed a few accents.
   const vendorData: Vendor[] = [
-    // PLAN DOMAIN (17 vendors)
+    // ---------------- PLAN (17) ----------------
     {
       domain: 'Plan',
       vendor: 'Kinaxis',
@@ -134,7 +135,7 @@ const SupplyChainDashboard = () => {
       strengths: 'SAP integration; comprehensive suite; strong roadmap',
       redFlags: 'Complex implementation; high TCO',
       successFactors: 'SAP ecosystem; dedicated Center of Excellence',
-      references: 'Unilever, Nestlé',
+      references: 'Unilever, Nestle',
       bestFor: ['Manufacturing', 'CPG', 'Chemicals'],
       companySize: ['Enterprise', 'Large Enterprise'],
       rating: 4.1,
@@ -341,7 +342,7 @@ const SupplyChainDashboard = () => {
       website: 'https://www.coupa.com/products/supply-chain-design-and-planning'
     },
 
-    // SOURCE DOMAIN (15 vendors)
+    // ---------------- SOURCE (15) ----------------
     {
       domain: 'Source',
       vendor: 'SAP Ariba',
@@ -613,7 +614,7 @@ const SupplyChainDashboard = () => {
       website: 'https://www.tungsten-network.com'
     },
 
-    // MAKE DOMAIN (8 vendors)
+    // ---------------- MAKE (8) ----------------
     {
       domain: 'Make',
       vendor: 'Aveva',
@@ -759,7 +760,7 @@ const SupplyChainDashboard = () => {
       website: 'https://www.emerson.com'
     },
 
-    // DELIVER DOMAIN (5 vendors)
+    // ---------------- DELIVER (5) ----------------
     {
       domain: 'Deliver',
       vendor: 'Manhattan Associates',
@@ -851,7 +852,7 @@ const SupplyChainDashboard = () => {
       website: 'https://www.project44.com'
     },
 
-    // RETURN DOMAIN (5 vendors)
+    // ---------------- RETURN (5) ----------------
     {
       domain: 'Return',
       vendor: 'Optoro',
@@ -943,7 +944,7 @@ const SupplyChainDashboard = () => {
       website: 'https://www.newmine.com'
     },
 
-    // ENABLE DOMAIN (4 vendors)
+    // ---------------- ENABLE (4) ----------------
     {
       domain: 'Enable',
       vendor: 'Celonis',
@@ -1048,7 +1049,7 @@ const SupplyChainDashboard = () => {
             placeholder="Search vendor / product / value prop…"
             value={searchTerm}
             onChange={(e:any) => setSearchTerm(e.target.value)}
-            style={{ outline: 'none', border: 'none', minWidth: 240 }}
+            style={{ outline: 'none', border: 'none', minWidth: 260 }}
           />
         </div>
 
